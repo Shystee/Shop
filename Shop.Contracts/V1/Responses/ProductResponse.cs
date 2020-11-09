@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 
-namespace Shop.DataAccess.Entities
+namespace Shop.Contracts.V1.Responses
 {
-    public class Product
+    public class ProductResponse
     {
         public int Id { get; set; }
 
@@ -12,6 +12,6 @@ namespace Shop.DataAccess.Entities
 
         public string Description { get; set; }
 
-        public Collection<Rating> Ratings { get; set; } = new Collection<Rating>();
+        public IEnumerable<RatingResponse> Ratings { get; set; }
     }
 }

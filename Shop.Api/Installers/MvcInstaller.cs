@@ -23,8 +23,9 @@ namespace Shop.Api.Installers
 
             services.AddControllers(options =>
                     {
-                        options.EnableEndpointRouting = false;
-                        options.Filters.Add<ValidationFilter>();
+                        //options.EnableEndpointRouting = false;
+                        //options.Filters.Add<ValidationFilter>();
+                        options.Filters.Add<ExceptionFilter>();
                     })
                     .AddFluentValidation(mvcConfiguration =>
                             mvcConfiguration.RegisterValidatorsFromAssemblyContaining<Startup>());

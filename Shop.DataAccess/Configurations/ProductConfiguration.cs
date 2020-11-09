@@ -11,6 +11,7 @@ namespace Shop.DataAccess.Configurations
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
             builder.Property(p => p.Name).IsRequired();
+            builder.Property(p => p.Description).IsRequired();
             builder.Property(p => p.Price).HasColumnType("money");
             builder.HasMany(p => p.Ratings);
         }

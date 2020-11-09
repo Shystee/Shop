@@ -15,12 +15,6 @@ namespace Shop.Contracts.V1.Responses
 
         public IEnumerable<T> Data { get; set; }
 
-        public string NextPage { get; set; }
-
-        public int? PageNumber { get; set; }
-
-        public int? PageSize { get; set; }
-
-        public string PreviousPage { get; set; }
+        public Metadata Metadata { get; set; }
     }
 }

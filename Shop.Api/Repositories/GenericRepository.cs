@@ -7,7 +7,7 @@ namespace Shop.Api.Repositories
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
-        void Add(TEntity model);
+        Task AddAsync(TEntity model);
 
         Task<IEnumerable<TEntity>> GetAllAsync();
 
@@ -18,6 +18,8 @@ namespace Shop.Api.Repositories
         void Remove(TEntity model);
 
         Task<bool> SaveAsync();
+
+        void Update(TEntity model);
     }
 
     public class GenericRepository<TEntity, TContext> : IGenericRepository<TEntity>
@@ -30,9 +32,9 @@ namespace Shop.Api.Repositories
             Context = context;
         }
 
-        public void Add(TEntity model)
+        public virtual async Task AddAsync(TEntity model)
         {
-            Context.Set<TEntity>().Add(model);
+            await Context.Set<TEntity>().AddAsync(model).ConfigureAwait(false);
         }
 
         public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
@@ -60,6 +62,11 @@ namespace Shop.Api.Repositories
             var changedRows = await Context.SaveChangesAsync().ConfigureAwait(false);
 
             return changedRows > 0;
+        }
+
+        public virtual void Update(TEntity model)
+        {
+            Context.Set<TEntity>().Update(model);
         }
     }
 }

@@ -6,22 +6,20 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shop.Api.Domain;
 using Shop.Api.Options;
-using Shop.DataAccess;
+using Shop.Api.Repositories;
 using Shop.DataAccess.Entities;
 
 namespace Shop.Api.Services
 {
     public class IdentityService : IIdentityService
     {
-        private readonly DataContext context;
-
         private readonly JwtSettings jwtSettings;
+        private readonly IRefreshTokenRepository refreshTokenRepository;
 
-        // private readonly RoleManager<IdentityRole> roleManager;
+        private readonly RoleManager<IdentityRole> roleManager;
 
         private readonly TokenValidationParameters tokenValidationParameters;
 
@@ -31,13 +29,14 @@ namespace Shop.Api.Services
             UserManager<IdentityUser> userManager,
             JwtSettings jwtSettings,
             TokenValidationParameters tokenValidationParameters,
-            DataContext context)
+            IRefreshTokenRepository refreshTokenRepository,
+            RoleManager<IdentityRole> roleManager)
         {
             this.userManager = userManager;
             this.jwtSettings = jwtSettings;
             this.tokenValidationParameters = tokenValidationParameters;
-            this.context = context;
-            // this.roleManager = roleManager;
+            this.refreshTokenRepository = refreshTokenRepository;
+            this.roleManager = roleManager;
         }
 
         public async Task<AuthenticationResult> LoginAsync(string email, string password)
@@ -95,9 +94,8 @@ namespace Shop.Api.Services
 
             var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
 
-            var storedRefreshToken = await context
-                                           .RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshToken)
-                                           .ConfigureAwait(false);
+            var storedRefreshToken = await refreshTokenRepository.GetByIdAsync(refreshToken)
+                                                                 .ConfigureAwait(false);
 
             if (storedRefreshToken == null)
             {
@@ -140,8 +138,8 @@ namespace Shop.Api.Services
             }
 
             storedRefreshToken.Used = true;
-            context.RefreshTokens.Update(storedRefreshToken);
-            await context.SaveChangesAsync();
+            refreshTokenRepository.Update(storedRefreshToken);
+            await refreshTokenRepository.SaveAsync().ConfigureAwait(false);
 
             var user = await userManager
                              .FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value)
@@ -199,26 +197,26 @@ namespace Shop.Api.Services
             var userClaims = await userManager.GetClaimsAsync(user).ConfigureAwait(false);
             claims.AddRange(userClaims);
 
-            //var userRoles = await userManager.GetRolesAsync(user);
+            var userRoles = await userManager.GetRolesAsync(user);
 
-            //foreach (var userRole in userRoles)
-            //{
-            //    claims.Add(new Claim(ClaimTypes.Role, userRole));
-            //    var role = await roleManager.FindByNameAsync(userRole).ConfigureAwait(false);
+            foreach (var userRole in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRole));
+                var role = await roleManager.FindByNameAsync(userRole).ConfigureAwait(false);
 
-            //    if (role == null) continue;
-            //    var roleClaims = await roleManager.GetClaimsAsync(role).ConfigureAwait(false);
+                if (role == null) continue;
+                var roleClaims = await roleManager.GetClaimsAsync(role).ConfigureAwait(false);
 
-            //    foreach (var roleClaim in roleClaims)
-            //    {
-            //        if (claims.Contains(roleClaim))
-            //        {
-            //            continue;
-            //        }
+                foreach (var roleClaim in roleClaims)
+                {
+                    if (claims.Contains(roleClaim))
+                    {
+                        continue;
+                    }
 
-            //        claims.Add(roleClaim);
-            //    }
-            //}
+                    claims.Add(roleClaim);
+                }
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -238,8 +236,8 @@ namespace Shop.Api.Services
                 ExpiryDate = DateTime.UtcNow.AddMonths(6)
             };
 
-            await context.RefreshTokens.AddAsync(refreshToken).ConfigureAwait(false);
-            await context.SaveChangesAsync().ConfigureAwait(false);
+            await refreshTokenRepository.AddAsync(refreshToken).ConfigureAwait(false);
+            await refreshTokenRepository.SaveAsync().ConfigureAwait(false);
 
             return new AuthenticationResult
             {

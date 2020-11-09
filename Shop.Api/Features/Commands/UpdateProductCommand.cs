@@ -1,8 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using Shop.Api.Infrastructure.Core.Commands;
+using Shop.Contracts.V1.Responses;
 
-namespace Shop.DataAccess.Entities
+namespace Shop.Api.Features.Commands
 {
-    public class Product
+    public class UpdateProductCommand : ICommand<ProductResponse>
     {
         public int Id { get; set; }
 
@@ -11,7 +12,5 @@ namespace Shop.DataAccess.Entities
         public decimal Price { get; set; }
 
         public string Description { get; set; }
-
-        public Collection<Rating> Ratings { get; set; } = new Collection<Rating>();
     }
 }

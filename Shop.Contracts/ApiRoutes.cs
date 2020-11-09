@@ -1,4 +1,4 @@
-﻿namespace Shop.Contracts.V1
+﻿namespace Shop.Contracts
 {
     public static class ApiRoutes
     {

@@ -25,5 +25,10 @@
     <ProjectReference Include="..\Shop.DataAccess\Shop.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Results\" />
+    <Folder Include="Infrastructure\Bindings\" />
+  </ItemGroup>
+
 
 </Project>

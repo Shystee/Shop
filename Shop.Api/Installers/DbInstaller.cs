@@ -10,9 +10,11 @@ namespace Shop.Api.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<DataContext>(options =>
-                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<DataContext>();
+            //services.AddDbContext<DataContext>(options =>
+            //        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDefaultIdentity<IdentityUser>()
+            //        .AddRoles<IdentityRole>()
+            //        .AddEntityFrameworkStores<DataContext>();
         }
     }
 }
