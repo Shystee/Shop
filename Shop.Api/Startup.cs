@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using Shop.Api.Extensions;
 using Shop.Api.Helpers;
 using Shop.Api.Infrastructure.Filters;
@@ -33,10 +34,12 @@ namespace Shop.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwagger(Configuration);
+            app.UseSerilogRequestLogging();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
             app.UseAuthorization();
             app.UseAuthentication();
 
@@ -56,7 +59,10 @@ namespace Shop.Api
                     .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<DataContext>();
 
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddSwagger(Configuration);
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>));
 
             services.AddScoped<ISortHelper<Product>, SortHelper<Product>>();
             services.AddScoped<ISortHelper<Rating>, SortHelper<Rating>>();

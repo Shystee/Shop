@@ -31,6 +31,11 @@ namespace Shop.Api.Controllers.V1
             this.uriService = uriService;
         }
 
+        /// <summary>
+        /// Creates product in the system
+        /// </summary>
+        /// <response code="201">Returns product</response>
+        /// <response code="400">Unable to create product due to validation error</response>
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost(ApiRoutes.Products.Create)]
         public async Task<IActionResult> Create([FromBody]CreateProductRequest request)
@@ -40,6 +45,12 @@ namespace Shop.Api.Controllers.V1
             return Created(uriService.GetProductUri(result.Id), new Response<ProductResponse>(result));
         }
 
+        /// <summary>
+        /// Creates product rating in the system
+        /// </summary>
+        /// <response code="201">Returns product rating</response>
+        /// <response code="400">Unable to create product rating due to validation error</response>
+        /// <response code="404">Unable to create product rating due to product not existing</response>
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost(ApiRoutes.ProductRatings.Create)]
         public async Task<IActionResult> CreateProductRating(
@@ -57,6 +68,12 @@ namespace Shop.Api.Controllers.V1
             return Created(uriService.GetRatingUri(result.Id), new Response<RatingResponse>(result));
         }
 
+        /// <summary>
+        /// Deletes product in the system
+        /// </summary>
+        /// <response code="204">No content</response>
+        /// <response code="400">Unable to delete product due to validation error</response>
+        /// <response code="404">Unable to delete product due to it not existing</response>
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete(ApiRoutes.Products.Delete)]
         public async Task<IActionResult> Delete([FromRoute]int productId)
@@ -71,6 +88,12 @@ namespace Shop.Api.Controllers.V1
             return NoContent();
         }
 
+        /// <summary>
+        /// Retrieve product in the system
+        /// </summary>
+        /// <response code="200">Returns product</response>
+        /// <response code="400">Unable to retrieve product due to validation error</response>
+        /// <response code="404">Unable to retrieve product due to it not existing</response>
         [HttpGet(ApiRoutes.Products.Get)]
         public async Task<IActionResult> Get([FromRoute]int productId)
         {
@@ -84,6 +107,10 @@ namespace Shop.Api.Controllers.V1
             return Ok(new Response<ProductResponse>(result));
         }
 
+        /// <summary>
+        /// Retrieve products in the system
+        /// </summary>
+        /// <response code="200">Returns products</response>
         [HttpGet(ApiRoutes.Products.GetAll)]
         public async Task<IActionResult> GetAll(
             [FromQuery]GetAllProductsQuery query,
@@ -107,6 +134,11 @@ namespace Shop.Api.Controllers.V1
                 result));
         }
 
+        /// <summary>
+        /// Retrieve product ratings in the system
+        /// </summary>
+        /// <response code="200">Returns product ratings</response>
+        /// <response code="404">Unable to retrieve product ratings due to product not existing</response>
         [HttpGet(ApiRoutes.ProductRatings.GetAll)]
         public async Task<IActionResult> GetProductRatings(
             [FromRoute]int productId,
@@ -132,6 +164,12 @@ namespace Shop.Api.Controllers.V1
                 result));
         }
 
+        /// <summary>
+        /// Updates product in the system
+        /// </summary>
+        /// <response code="200">Returns updated product</response>
+        /// <response code="400">Unable to update product due validation errors</response>
+        /// <response code="404">Unable to update product due to it not existing</response>
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut(ApiRoutes.Products.Update)]
         public async Task<IActionResult> Update(

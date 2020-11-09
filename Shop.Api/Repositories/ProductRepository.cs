@@ -40,7 +40,7 @@ namespace Shop.Api.Repositories
             PaginationFilter pagination,
             SortingFilter sortingFilter)
         {
-            IQueryable<Product> queryable = Context.Products;
+            IQueryable<Product> queryable = Context.Products.Include(x => x.Ratings);
 
             queryable = FilterProducts(queryable, filter);
             queryable = sortHelper.ApplySort(queryable, sortingFilter);

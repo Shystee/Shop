@@ -6,7 +6,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Shop.Api.Infrastructure.Filters
 {
@@ -15,10 +15,10 @@ namespace Shop.Api.Infrastructure.Filters
         private readonly IHostEnvironment env;
         private readonly ILogger logger;
 
-        public ExceptionFilter(IHostEnvironment env, ILogger<ExceptionFilter> logger)
+        public ExceptionFilter(IHostEnvironment env, ILogger logger)
         {
             this.env = env;
-            this.logger = logger;
+            this.logger = logger?.ForContext<ExceptionFilter>();
         }
 
         public void OnException(ExceptionContext context)
@@ -58,15 +58,15 @@ namespace Shop.Api.Infrastructure.Filters
 
             if (statusCode >= 500)
             {
-                logger.LogCritical(logTitle, logError);
+                logger.Error(logTitle, logError);
             }
             else if (statusCode == 404 || statusCode == 401)
             {
-                logger.LogInformation(logTitle, logError);
+                logger.Information(logTitle, logError);
             }
             else
             {
-                logger.LogWarning(logTitle, logError);
+                logger.Warning(logTitle, logError);
             }
         }
 

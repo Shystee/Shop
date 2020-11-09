@@ -20,6 +20,11 @@ namespace Shop.Api.Controllers.V1
             this.mapper = mapper;
         }
 
+        /// <summary>
+        /// Logins user to the system
+        /// </summary>
+        /// <response code="200">Return user token</response>
+        /// <response code="400">Unable to login user due to validation error</response>
         [HttpPost(ApiRoutes.Identity.Login)]
         public async Task<IActionResult> Login([FromBody]UserLoginRequest request)
         {
@@ -28,6 +33,11 @@ namespace Shop.Api.Controllers.V1
             return Ok(result);
         }
 
+        /// <summary>
+        /// Refreshes users token
+        /// </summary>
+        /// <response code="200">Return user token</response>
+        /// <response code="400">Unable to refresh users token due to validation error</response>
         [HttpPost(ApiRoutes.Identity.Refresh)]
         public async Task<IActionResult> Refresh([FromBody]RefreshTokenRequest request)
         {
@@ -36,6 +46,11 @@ namespace Shop.Api.Controllers.V1
             return Ok(result);
         }
 
+        /// <summary>
+        /// Registers user to the system
+        /// </summary>
+        /// <response code="200">Return user token</response>
+        /// <response code="400">Unable to register user due to validation error</response>
         [HttpPost(ApiRoutes.Identity.Register)]
         public async Task<IActionResult> Register([FromBody]UserRegistrationRequest request)
         {

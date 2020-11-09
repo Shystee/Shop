@@ -26,6 +26,12 @@ namespace Shop.Api.Controllers.V1
             this.mapper = mapper;
         }
 
+        /// <summary>
+        /// Deletes rating from the system
+        /// </summary>
+        /// <response code="204">Returns no content</response>
+        /// <response code="400">Unable to delete rating due to validation error</response>
+        /// <response code="404">Unable to delete rating due to it not existing</response>
         [HttpDelete(ApiRoutes.Ratings.Delete)]
         public async Task<IActionResult> Delete([FromRoute]int ratingId)
         {
@@ -40,6 +46,12 @@ namespace Shop.Api.Controllers.V1
             return NoContent();
         }
 
+        /// <summary>
+        /// Gets rating from the system
+        /// </summary>
+        /// <response code="204">Returns rating</response>
+        /// <response code="400">Unable to retrieve rating due to validation error</response>
+        /// <response code="404">Unable to retrieve rating due to it not existing</response>
         [HttpGet(ApiRoutes.Ratings.Get)]
         public async Task<IActionResult> Get([FromRoute]int ratingId)
         {
@@ -53,6 +65,12 @@ namespace Shop.Api.Controllers.V1
             return Ok(new Response<RatingResponse>(result));
         }
 
+        /// <summary>
+        /// Updates rating in the system
+        /// </summary>
+        /// <response code="204">Returns rating</response>
+        /// <response code="400">Unable to update rating due to validation error</response>
+        /// <response code="404">Unable to update rating due to it not existing</response>
         [HttpPut(ApiRoutes.Ratings.Update)]
         public async Task<IActionResult> Update(
             [FromRoute]int ratingId,
