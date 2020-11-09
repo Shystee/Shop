@@ -10,17 +10,20 @@ using Shop.DataAccess.Entities;
 
 namespace Shop.Api.Repositories
 {
-    public interface IProductRepository : IGenericRepository<Product>
+    public interface IProductRepository : IGenericRepository<Product>, IReadOnlyProductRepository
     {
         bool DoesProductExist(int productId);
+    }
 
+    public interface IReadOnlyProductRepository : IReadOnlyRepository<Product>
+    {
         Task<List<Product>> GetAllAsync(
             GetAllProductsFilter filter,
             PaginationFilter pagination,
             SortingFilter sortingFilter);
     }
 
-    public class ProductRepository : GenericRepository<Product, DataContext>, IProductRepository
+    public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
         private readonly ISortHelper<Product> sortHelper;
 

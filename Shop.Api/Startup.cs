@@ -77,7 +77,10 @@ namespace Shop.Api
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IRatingRepository, RatingRepository>();
 
+            services.AddScoped<IReadOnlyProductRepository, InMemoryCachedProductRepository>();
+
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddSingleton<IPaginationService, PaginationService>();
         }
     }
 }

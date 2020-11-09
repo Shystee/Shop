@@ -8,7 +8,6 @@ using Shop.Api.Domain;
 using Shop.Api.Extensions;
 using Shop.Api.Features.Commands;
 using Shop.Api.Features.Queries;
-using Shop.Api.Helpers;
 using Shop.Api.Services;
 using Shop.Contracts;
 using Shop.Contracts.V1.Requests;
@@ -22,17 +21,23 @@ namespace Shop.Api.Controllers.V1
     {
         private readonly IMapper mapper;
         private readonly IMediator mediator;
+        private readonly IPaginationService paginationService;
         private readonly IUriService uriService;
 
-        public ProductsController(IMediator mediator, IMapper mapper, IUriService uriService)
+        public ProductsController(
+            IMediator mediator,
+            IMapper mapper,
+            IUriService uriService,
+            IPaginationService paginationService)
         {
             this.mediator = mediator;
             this.mapper = mapper;
             this.uriService = uriService;
+            this.paginationService = paginationService;
         }
 
         /// <summary>
-        /// Creates product in the system
+        ///     Creates product in the system
         /// </summary>
         /// <response code="201">Returns product</response>
         /// <response code="400">Unable to create product due to validation error</response>
@@ -46,7 +51,7 @@ namespace Shop.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Creates product rating in the system
+        ///     Creates product rating in the system
         /// </summary>
         /// <response code="201">Returns product rating</response>
         /// <response code="400">Unable to create product rating due to validation error</response>
@@ -69,7 +74,7 @@ namespace Shop.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Deletes product in the system
+        ///     Deletes product in the system
         /// </summary>
         /// <response code="204">No content</response>
         /// <response code="400">Unable to delete product due to validation error</response>
@@ -89,7 +94,7 @@ namespace Shop.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Retrieve product in the system
+        ///     Retrieve product in the system
         /// </summary>
         /// <response code="200">Returns product</response>
         /// <response code="400">Unable to retrieve product due to validation error</response>
@@ -108,7 +113,7 @@ namespace Shop.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Retrieve products in the system
+        ///     Retrieve products in the system
         /// </summary>
         /// <response code="200">Returns products</response>
         [HttpGet(ApiRoutes.Products.GetAll)]
@@ -128,14 +133,13 @@ namespace Shop.Api.Controllers.V1
 
             var result = await mediator.Send(productQuery).ConfigureAwait(false);
 
-            return Ok(PaginationHelpers.CreatePaginatedResponse(uriService,
-                paginationFilter,
+            return Ok(paginationService.CreateProductPaginatedResponse(paginationFilter,
                 sortingFilter,
                 result));
         }
 
         /// <summary>
-        /// Retrieve product ratings in the system
+        ///     Retrieve product ratings in the system
         /// </summary>
         /// <response code="200">Returns product ratings</response>
         /// <response code="404">Unable to retrieve product ratings due to product not existing</response>
@@ -158,14 +162,14 @@ namespace Shop.Api.Controllers.V1
 
             var result = await mediator.Send(productQuery).ConfigureAwait(false);
 
-            return Ok(PaginationHelpers.CreatePaginatedResponse(uriService,
+            return Ok(paginationService.CreateProductRatingsPaginatedResponse(productId,
                 paginationFilter,
                 sortingFilter,
                 result));
         }
 
         /// <summary>
-        /// Updates product in the system
+        ///     Updates product in the system
         /// </summary>
         /// <response code="200">Returns updated product</response>
         /// <response code="400">Unable to update product due validation errors</response>

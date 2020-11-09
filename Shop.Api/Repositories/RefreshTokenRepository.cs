@@ -8,7 +8,7 @@ namespace Shop.Api.Repositories
     }
 
     public class RefreshTokenRepository
-            : GenericRepository<RefreshToken, DataContext>, IRefreshTokenRepository
+            : GenericRepository<RefreshToken>, IRefreshTokenRepository
     {
         public RefreshTokenRepository(DataContext context)
                 : base(context)

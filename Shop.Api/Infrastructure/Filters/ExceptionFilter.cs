@@ -35,10 +35,10 @@ namespace Shop.Api.Infrastructure.Filters
                     content.Add("ErrorMessage", context.Exception.Message);
                 }
 
-                //if (env.IsDevelopment())
-                //{
-                //    content.Add("Exception", context.Exception.StackTrace);
-                //}
+                if (env.IsDevelopment())
+                {
+                    content.Add("Exception", context.Exception.StackTrace);
+                }
 
                 var statusCode = (int)MapStatusCode(context.Exception);
 

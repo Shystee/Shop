@@ -18,7 +18,7 @@ namespace Shop.Api.Repositories
             SortingFilter sortingFilter);
     }
 
-    public class RatingRepository : GenericRepository<Rating, DataContext>, IRatingRepository
+    public class RatingRepository : GenericRepository<Rating>, IRatingRepository
     {
         private readonly ISortHelper<Rating> sortHelper;
 

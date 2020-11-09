@@ -5,13 +5,9 @@ using Shop.DataAccess;
 
 namespace Shop.Api.Repositories
 {
-    public interface IGenericRepository<TEntity> where TEntity : class
+    public interface IGenericRepository<TEntity> : IReadOnlyRepository<TEntity> where TEntity : class
     {
         Task AddAsync(TEntity model);
-
-        Task<IEnumerable<TEntity>> GetAllAsync();
-
-        Task<TEntity> GetByIdAsync(object id);
 
         bool HasChanges();
 
@@ -22,12 +18,19 @@ namespace Shop.Api.Repositories
         void Update(TEntity model);
     }
 
-    public class GenericRepository<TEntity, TContext> : IGenericRepository<TEntity>
-            where TEntity : class where TContext : DataContext
+    public interface IReadOnlyRepository<TEntity> where TEntity : class
     {
-        protected readonly TContext Context;
+        Task<IEnumerable<TEntity>> GetAllAsync();
 
-        protected GenericRepository(TContext context)
+        Task<TEntity> GetByIdAsync(object id);
+    }
+
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity>
+            where TEntity : class
+    {
+        protected readonly DataContext Context;
+
+        protected GenericRepository(DataContext context)
         {
             Context = context;
         }

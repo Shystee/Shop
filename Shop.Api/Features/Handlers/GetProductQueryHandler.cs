@@ -6,15 +6,16 @@ using Shop.Api.Features.Queries;
 using Shop.Api.Infrastructure.Core.Queries;
 using Shop.Api.Repositories;
 using Shop.Contracts.V1.Responses;
+using Shop.DataAccess.Entities;
 
 namespace Shop.Api.Features.Handlers
 {
     public class GetProductQueryHandler : IQueryHandler<GetProductQuery, ProductResponse>
     {
         private readonly IMapper mapper;
-        private readonly IProductRepository productRepository;
+        private readonly IReadOnlyProductRepository productRepository;
 
-        public GetProductQueryHandler(IProductRepository productRepository, IMapper mapper)
+        public GetProductQueryHandler(IReadOnlyProductRepository productRepository, IMapper mapper)
         {
             this.productRepository = productRepository;
             this.mapper = mapper;

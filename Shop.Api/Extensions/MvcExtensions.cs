@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Shop.Api.Options;
 using Shop.Api.Services;
+using StackExchange.Redis;
 
 namespace Shop.Api.Extensions
 {
@@ -51,6 +52,27 @@ namespace Shop.Api.Extensions
 
                 return new UriService(absoluteUri);
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddRedis(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var redisCacheSettings = new RedisCacheSettings();
+            configuration.GetSection(nameof(RedisCacheSettings)).Bind(redisCacheSettings);
+            services.AddSingleton(redisCacheSettings);
+
+            if (!redisCacheSettings.Enabled)
+            {
+                return services;
+            }
+
+            services.AddSingleton<IConnectionMultiplexer>(_ =>
+                    ConnectionMultiplexer.Connect(redisCacheSettings.ConnectionString));
+            services.AddStackExchangeRedisCache(options => options.Configuration = redisCacheSettings.ConnectionString);
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
             return services;
         }

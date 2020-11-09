@@ -10,5 +10,7 @@ namespace Shop.Api.Services
         Uri GetProductUri(int productId);
 
         Uri GetRatingUri(int ratingId);
+
+        Uri GetProductRatingUri(int productId, PaginationQuery pagination = null);
     }
 }
