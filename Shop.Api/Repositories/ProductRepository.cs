@@ -12,6 +12,8 @@ namespace Shop.Api.Repositories
 {
     public interface IProductRepository : IGenericRepository<Product>
     {
+        bool DoesProductExist(int productId);
+
         Task<List<Product>> GetAllAsync(
             GetAllProductsFilter filter,
             PaginationFilter pagination,
@@ -28,6 +30,11 @@ namespace Shop.Api.Repositories
             this.sortHelper = sortHelper;
         }
 
+        public bool DoesProductExist(int productId)
+        {
+            return Context.Products.Any(x => x.Id == productId);
+        }
+
         public Task<List<Product>> GetAllAsync(
             GetAllProductsFilter filter,
             PaginationFilter pagination,
@@ -39,6 +46,11 @@ namespace Shop.Api.Repositories
             queryable = sortHelper.ApplySort(queryable, sortingFilter);
 
             return queryable.ApplyPagination(pagination).ToListAsync();
+        }
+
+        public override Task<Product> GetByIdAsync(object id)
+        {
+            return Context.Products.Include(x => x.Ratings).FirstOrDefaultAsync(x => x.Id == (int)id);
         }
 
         private IQueryable<Product> FilterProducts(IQueryable<Product> queryable, GetAllProductsFilter filter)

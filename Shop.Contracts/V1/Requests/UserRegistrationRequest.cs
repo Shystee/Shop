@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Shop.Contracts.V1.Requests
 {
     public class UserRegistrationRequest

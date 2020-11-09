@@ -20,7 +20,9 @@ namespace Shop.Api.Features.Handlers
             this.mapper = mapper;
         }
 
-        public async Task<ProductResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public async Task<ProductResponse> Handle(
+            CreateProductCommand request,
+            CancellationToken cancellationToken)
         {
             var product = new Product
             {

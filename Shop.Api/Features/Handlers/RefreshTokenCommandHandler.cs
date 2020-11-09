@@ -10,8 +10,7 @@ using Shop.Contracts.V1.Responses;
 
 namespace Shop.Api.Features.Handlers
 {
-    public class RefreshTokenCommandHandler
-            : ICommandHandler<RefreshTokenCommand, AuthSuccessResponse>
+    public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, AuthSuccessResponse>
     {
         private readonly IIdentityService identityService;
 
@@ -20,7 +19,9 @@ namespace Shop.Api.Features.Handlers
             this.identityService = identityService;
         }
 
-        public async Task<AuthSuccessResponse> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+        public async Task<AuthSuccessResponse> Handle(
+            RefreshTokenCommand request,
+            CancellationToken cancellationToken)
         {
             var authResponse = await identityService
                                      .RefreshTokenAsync(request.Token, request.RefreshToken)

@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Shop.Api.Extensions;
 using Shop.Api.Helpers;
+using Shop.Api.Infrastructure.Filters;
 using Shop.Api.Repositories;
 using Shop.DataAccess;
 using Shop.DataAccess.Entities;
@@ -55,10 +56,14 @@ namespace Shop.Api
                     .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<DataContext>();
 
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
             services.AddScoped<ISortHelper<Product>, SortHelper<Product>>();
+            services.AddScoped<ISortHelper<Rating>, SortHelper<Rating>>();
 
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IRatingRepository, RatingRepository>();
         }
     }
 }

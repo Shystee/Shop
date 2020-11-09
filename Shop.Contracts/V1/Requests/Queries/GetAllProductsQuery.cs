@@ -4,6 +4,9 @@ namespace Shop.Contracts.V1.Requests.Queries
 {
     public class GetAllProductsQuery
     {
+        [FromQuery(Name = "desc")]
+        public string Description { get; set; }
+
         [FromQuery(Name = "name")]
         public string Name { get; set; }
 
@@ -12,9 +15,6 @@ namespace Shop.Contracts.V1.Requests.Queries
 
         [FromQuery(Name = "priceTo")]
         public decimal? PriceTo { get; set; }
-
-        [FromQuery(Name = "desc")]
-        public string Description { get; set; }
 
         [FromQuery(Name = "ratingFrom")]
         public double? RatingFrom { get; set; }

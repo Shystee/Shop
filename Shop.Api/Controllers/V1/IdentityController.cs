@@ -4,7 +4,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Api.Features.Commands;
 using Shop.Contracts;
-using Shop.Contracts.V1;
 using Shop.Contracts.V1.Requests;
 
 namespace Shop.Api.Controllers.V1

@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shop.Api.Extensions;
+using Shop.Api.Features.Commands;
+using Shop.Api.Features.Queries;
 using Shop.Contracts;
-using Shop.Contracts.V1;
 using Shop.Contracts.V1.Requests;
-using Shop.Contracts.V1.Requests.Queries;
+using Shop.Contracts.V1.Responses;
 
 namespace Shop.Api.Controllers.V1
 {
-    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Produces("application/json")]
     public class RatingsController : ControllerBase
     {
-        private readonly IMediator mediator;
-
         private readonly IMapper mapper;
+        private readonly IMediator mediator;
 
         public RatingsController(IMediator mediator, IMapper mapper)
         {
@@ -28,34 +26,47 @@ namespace Shop.Api.Controllers.V1
             this.mapper = mapper;
         }
 
-        [HttpGet(ApiRoutes.Ratings.GetAll)]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllRatingsQuery query, [FromQuery] PaginationQuery paginationQuery)
-        {
-            return Ok("Get all");
-        }
-
-        [HttpPut(ApiRoutes.Ratings.Update)]
-        public async Task<IActionResult> Update([FromRoute] int ratingId, [FromBody] UpdateRatingRequest request)
-        {
-            return Ok("Update");
-        }
-
         [HttpDelete(ApiRoutes.Ratings.Delete)]
-        public async Task<IActionResult> Delete([FromRoute] int ratingId)
+        public async Task<IActionResult> Delete([FromRoute]int ratingId)
         {
-            return Ok("Delete");
+            var command = new DeleteRatingCommand
+            {
+                RatingId = ratingId,
+                UserId = HttpContext.GetUserId()
+            };
+
+            await mediator.Send(command).ConfigureAwait(false);
+
+            return NoContent();
         }
 
         [HttpGet(ApiRoutes.Ratings.Get)]
-        public async Task<IActionResult> Get([FromRoute] int ratingId)
+        public async Task<IActionResult> Get([FromRoute]int ratingId)
         {
-            return Ok("Get");
+            var query = new GetRatingQuery
+            {
+                RatingId = ratingId
+            };
+
+            var result = await mediator.Send(query).ConfigureAwait(false);
+
+            return Ok(new Response<RatingResponse>(result));
         }
 
-        [HttpPost(ApiRoutes.Ratings.Create)]
-        public async Task<IActionResult> Create([FromBody] CreateRatingRequest request)
+        [HttpPut(ApiRoutes.Ratings.Update)]
+        public async Task<IActionResult> Update(
+            [FromRoute]int ratingId,
+            [FromBody]UpdateRatingRequest request)
         {
-            return Ok("Create");
+            var command = new UpdateRatingCommand
+            {
+                Id = ratingId,
+                UserId = HttpContext.GetUserId()
+            };
+            mapper.Map(request, command);
+            var result = await mediator.Send(command).ConfigureAwait(false);
+
+            return Ok(new Response<RatingResponse>(result));
         }
     }
 }

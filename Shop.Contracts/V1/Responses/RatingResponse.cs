@@ -2,9 +2,9 @@
 {
     public class RatingResponse
     {
-        public int Id { get; set; }
-
         public string Comment { get; set; }
+
+        public int Id { get; set; }
 
         public double Value { get; set; }
     }

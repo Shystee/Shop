@@ -1,6 +1,4 @@
-﻿using MediatR;
-using Shop.Api.Domain;
-using Shop.Api.Infrastructure.Core.Commands;
+﻿using Shop.Api.Infrastructure.Core.Commands;
 
 namespace Shop.Api.Features.Commands
 {

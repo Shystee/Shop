@@ -15,6 +15,11 @@ namespace Shop.Api.MappingProfiles
 
             // Product mappings
             CreateMap<CreateProductRequest, CreateProductCommand>();
+            CreateMap<UpdateProductRequest, UpdateProductCommand>();
+
+            // Rating mappings
+            CreateMap<CreateRatingRequest, CreateRatingCommand>();
+            CreateMap<UpdateRatingRequest, UpdateRatingCommand>();
         }
     }
 }

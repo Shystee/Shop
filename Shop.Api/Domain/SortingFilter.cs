@@ -5,6 +5,6 @@ namespace Shop.Api.Domain
 {
     public class SortingFilter
     {
-        public IEnumerable<Sorting> Sortings { get; set; }
+        public IEnumerable<SortingQuery> Sortings { get; set; }
     }
 }

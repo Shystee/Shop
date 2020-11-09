@@ -4,51 +4,31 @@ namespace Shop.DataAccess.Migrations
 {
     public partial class AddedProductDescriptionAndRatingUser : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<string>(
-                name: "UserId",
-                table: "Ratings",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<string>(
-                name: "Description",
-                table: "Products",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Ratings_UserId",
-                table: "Ratings",
-                column: "UserId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Ratings_AspNetUsers_UserId",
-                table: "Ratings",
-                column: "UserId",
-                principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-        }
-
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Ratings_AspNetUsers_UserId",
-                table: "Ratings");
+            migrationBuilder.DropForeignKey("FK_Ratings_AspNetUsers_UserId", "Ratings");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Ratings_UserId",
-                table: "Ratings");
+            migrationBuilder.DropIndex("IX_Ratings_UserId", "Ratings");
 
-            migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "Ratings");
+            migrationBuilder.DropColumn("UserId", "Ratings");
 
-            migrationBuilder.DropColumn(
-                name: "Description",
-                table: "Products");
+            migrationBuilder.DropColumn("Description", "Products");
+        }
+
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn<string>("UserId", "Ratings", nullable: false, defaultValue: "");
+
+            migrationBuilder.AddColumn<string>("Description", "Products", nullable: false, defaultValue: "");
+
+            migrationBuilder.CreateIndex("IX_Ratings_UserId", "Ratings", "UserId");
+
+            migrationBuilder.AddForeignKey("FK_Ratings_AspNetUsers_UserId",
+                "Ratings",
+                "UserId",
+                "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
     }
 }

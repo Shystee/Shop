@@ -2,6 +2,8 @@
 {
     public class UpdateRatingRequest
     {
-        
+        public string Comment { get; set; }
+
+        public double Value { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Shop.Contracts.V1.Responses;
 
-namespace Shop.Api.Filters
+namespace Shop.Api.Infrastructure.Filters
 {
     public class ValidationFilter : IAsyncActionFilter
     {

@@ -5,10 +5,10 @@ namespace Shop.Api.Features.Commands
 {
     public class CreateProductCommand : ICommand<ProductResponse>
     {
+        public string Description { get; set; }
+
         public string Name { get; set; }
 
         public decimal Price { get; set; }
-
-        public string Description { get; set; }
     }
 }

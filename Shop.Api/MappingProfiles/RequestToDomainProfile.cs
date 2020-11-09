@@ -9,8 +9,9 @@ namespace Shop.Api.MappingProfiles
         public RequestToDomainProfile()
         {
             CreateMap<PaginationQuery, PaginationFilter>();
-            CreateMap<SortingQuery, SortingFilter>();
+            CreateMap<SortQuery, SortingFilter>();
             CreateMap<GetAllProductsQuery, GetAllProductsFilter>();
+            CreateMap<GetAllRatingsQuery, GetAllRatingsFilter>();
         }
     }
 }

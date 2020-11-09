@@ -8,7 +8,7 @@ namespace Shop.Contracts.ContractBindings
 {
     public class SortingModelBinder : IModelBinder
     {
-        private readonly Dictionary<string, SortingDirections> sortingDirections =
+        private static readonly Dictionary<string, SortingDirections> DirectionsDictionary =
                 new Dictionary<string, SortingDirections>
                 {
                     { "ASC", SortingDirections.Ascending },
@@ -21,7 +21,7 @@ namespace Shop.Contracts.ContractBindings
             var value = valueProviderResult.FirstValue; // get the value as string
 
             var sortingValues = value?.Split(",");
-            var model = new List<Sorting>();
+            var model = new List<SortingQuery>();
 
             if (sortingValues != null)
             {
@@ -32,7 +32,7 @@ namespace Shop.Contracts.ContractBindings
                     // if sorting is only name
                     if (splitValue.Length == 1)
                     {
-                        model.Add(new Sorting
+                        model.Add(new SortingQuery
                         {
                             Name = splitValue[0]
                         });
@@ -43,8 +43,8 @@ namespace Shop.Contracts.ContractBindings
                     {
                         // check if direction exits if not than default ascending
                         var valueExists =
-                                sortingDirections.TryGetValue(splitValue[1].ToUpper(), out var direction);
-                        model.Add(new Sorting
+                                DirectionsDictionary.TryGetValue(splitValue[1].ToUpper(), out var direction);
+                        model.Add(new SortingQuery
                         {
                             Name = splitValue[0],
                             Direction = valueExists

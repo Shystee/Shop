@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Shop.Api.Filters
+namespace Shop.Api.Infrastructure.Filters
 {
     public class ExceptionFilter : Attribute, IExceptionFilter
     {
@@ -34,7 +34,7 @@ namespace Shop.Api.Filters
                 {
                     content.Add("Exception", context.Exception.StackTrace);
 
-                    return;
+                    // return;
                 }
 
                 var statusCode = (int)MapStatusCode(context.Exception);
@@ -72,20 +72,15 @@ namespace Shop.Api.Filters
 
         private HttpStatusCode MapStatusCode(Exception ex)
         {
-            switch (ex)
+            return ex switch
             {
                 // Status Codes
-                case ArgumentNullException _:
-                    return HttpStatusCode.NotFound;
-                case ValidationException _:
-                    return HttpStatusCode.BadRequest;
-                case UnauthorizedAccessException _:
-                    return HttpStatusCode.Unauthorized;
-                case DuplicateNameException _:
-                    return HttpStatusCode.Conflict;
-                default:
-                    return HttpStatusCode.InternalServerError;
-            }
+                ArgumentNullException _ => HttpStatusCode.NotFound,
+                ValidationException _ => HttpStatusCode.BadRequest,
+                UnauthorizedAccessException _ => HttpStatusCode.Unauthorized,
+                DuplicateNameException _ => HttpStatusCode.Conflict,
+                _ => HttpStatusCode.InternalServerError
+            };
         }
     }
 }
