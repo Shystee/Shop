@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Net;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Shop.Api.Infrastructure.Exceptions;
 
 namespace Shop.Api.Infrastructure.Filters
 {
@@ -25,17 +25,20 @@ namespace Shop.Api.Infrastructure.Filters
         {
             if (context.Exception != null)
             {
-                var content = new Dictionary<string, object>
+                var content = new Dictionary<string, object>();
+                if (context.Exception is ValidationException exception)
                 {
-                    { "ErrorMessage", context.Exception.Message }
-                };
-
-                if (env.IsDevelopment())
-                {
-                    content.Add("Exception", context.Exception.StackTrace);
-
-                    // return;
+                    content.Add("Errors", exception.Errors);
                 }
+                else
+                {
+                    content.Add("ErrorMessage", context.Exception.Message);
+                }
+
+                //if (env.IsDevelopment())
+                //{
+                //    content.Add("Exception", context.Exception.StackTrace);
+                //}
 
                 var statusCode = (int)MapStatusCode(context.Exception);
 

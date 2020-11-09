@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using FluentValidation;
 using Shop.Api.Features.Commands;
 using Shop.Api.Infrastructure.Core.Commands;
+using Shop.Api.Infrastructure.Exceptions;
 using Shop.Api.Repositories;
 using Shop.Contracts.V1.Responses;
 using Shop.DataAccess.Entities;
@@ -32,8 +32,11 @@ namespace Shop.Api.Features.Handlers
         {
             if (!productRepository.DoesProductExist(request.ProductId))
             {
-                throw new ValidationException(
-                    $"Could not find {nameof(Product)} with id '{request.ProductId}'");
+                throw new ValidationException(new ErrorModel
+                {
+                    FieldName = nameof(request.ProductId),
+                    Message = $"Could not find {nameof(Product)} with id '{request.ProductId}'"
+                });
             }
 
             var rating = new Rating

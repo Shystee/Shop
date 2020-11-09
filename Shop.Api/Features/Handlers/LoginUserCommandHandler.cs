@@ -1,10 +1,9 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Results;
 using Shop.Api.Features.Commands;
 using Shop.Api.Infrastructure.Core.Commands;
+using Shop.Api.Infrastructure.Exceptions;
 using Shop.Api.Services;
 using Shop.Contracts.V1.Responses;
 
@@ -28,8 +27,11 @@ namespace Shop.Api.Features.Handlers
 
             if (!authResponse.Success)
             {
-                throw new ValidationException(
-                    authResponse.Errors.Select(x => new ValidationFailure(string.Empty, x)));
+                throw new ValidationException(authResponse.Errors.Select(x => new ErrorModel
+                {
+                    FieldName = string.Empty,
+                    Message = x
+                }));
             }
 
             return new AuthSuccessResponse

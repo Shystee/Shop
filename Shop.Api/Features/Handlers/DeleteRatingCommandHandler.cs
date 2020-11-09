@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation;
 using MediatR;
 using Shop.Api.Features.Commands;
 using Shop.Api.Infrastructure.Core.Commands;
+using Shop.Api.Infrastructure.Exceptions;
 using Shop.Api.Repositories;
+using Shop.Contracts.V1.Responses;
 
 namespace Shop.Api.Features.Handlers
 {
@@ -30,7 +31,11 @@ namespace Shop.Api.Features.Handlers
 
             if (rating.UserId != request.UserId)
             {
-                throw new ValidationException($"User doesn't own {nameof(rating)}");
+                throw new ValidationException(new ErrorModel
+                {
+                    FieldName = nameof(request.UserId),
+                    Message = $"User doesn't own {nameof(rating)}"
+                });
             }
 
             ratingRepository.Remove(rating);

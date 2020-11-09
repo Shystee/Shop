@@ -1,7 +1,10 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
+using Shop.Contracts.V1.Responses;
+using ValidationException = Shop.Api.Infrastructure.Exceptions.ValidationException;
 
 namespace Shop.Api.Infrastructure.Filters
 {
@@ -24,7 +27,11 @@ namespace Shop.Api.Infrastructure.Filters
 
             if (result != null && !result.IsValid)
             {
-                throw new ValidationException(result.Errors);
+                throw new ValidationException(result.Errors.Select(x => new ErrorModel
+                {
+                    FieldName = x.PropertyName,
+                    Message = x.ErrorMessage
+                }));
             }
 
             var response = await next();
