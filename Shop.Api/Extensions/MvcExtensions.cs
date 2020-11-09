@@ -1,34 +1,23 @@
 ﻿using System.Text;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Shop.Api.Infrastructure.Filters;
 using Shop.Api.Options;
 using Shop.Api.Services;
 
-namespace Shop.Api.Installers
+namespace Shop.Api.Extensions
 {
-    public class MvcInstaller : IInstaller
+    public static class MvcExtensions
     {
-        public void InstallServices(IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddBearerAuthentication(
+            this IServiceCollection services,
+            IConfiguration configuration)
         {
             var jwtSettings = new JwtSettings();
             configuration.Bind(nameof(jwtSettings), jwtSettings);
             services.AddSingleton(jwtSettings);
-
-            services.AddScoped<IIdentityService, IdentityService>();
-
-            services.AddControllers(options =>
-                    {
-                        //options.EnableEndpointRouting = false;
-                        //options.Filters.Add<ValidationFilter>();
-                        options.Filters.Add<ExceptionFilter>();
-                    })
-                    .AddFluentValidation(mvcConfiguration =>
-                            mvcConfiguration.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -62,6 +51,8 @@ namespace Shop.Api.Installers
 
                 return new UriService(absoluteUri);
             });
+
+            return services;
         }
     }
 }

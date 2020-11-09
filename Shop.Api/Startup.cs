@@ -1,4 +1,5 @@
 using AutoMapper;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,7 @@ using Shop.Api.Extensions;
 using Shop.Api.Helpers;
 using Shop.Api.Infrastructure.Filters;
 using Shop.Api.Repositories;
+using Shop.Api.Services;
 using Shop.DataAccess;
 using Shop.DataAccess.Entities;
 
@@ -49,7 +51,10 @@ namespace Shop.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.InstallServicesInAssembly(Configuration);
+            services.AddControllers(options => { options.Filters.Add<ExceptionFilter>(); })
+                    .AddFluentValidation(mvcConfiguration =>
+                            mvcConfiguration.RegisterValidatorsFromAssemblyContaining<Startup>());
+
             services.AddAutoMapper(typeof(Startup));
             services.AddMediatR(typeof(Startup));
 
@@ -59,6 +64,7 @@ namespace Shop.Api
                     .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<DataContext>();
 
+            services.AddBearerAuthentication(Configuration);
             services.AddSwagger(Configuration);
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
@@ -70,6 +76,8 @@ namespace Shop.Api
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IRatingRepository, RatingRepository>();
+
+            services.AddScoped<IIdentityService, IdentityService>();
         }
     }
 }
