@@ -3,10 +3,10 @@ using AutoFixture;
 using FluentAssertions;
 using Shop.Api.Features.Commands;
 using Shop.Api.Infrastructure.Exceptions;
+using UnitTests.Common;
 using Xunit;
-using XUnitTestProject.Common;
 
-namespace XUnitTestProject.Features
+namespace UnitTests.Features
 {
     public class CreateProductTest : TestBase
     {

@@ -2,27 +2,17 @@
 using AutoFixture;
 using Shop.Api.Features.Commands;
 using Shop.Api.Infrastructure.Exceptions;
+using UnitTests.Common;
 using Xunit;
-using XUnitTestProject.Common;
 
-namespace XUnitTestProject.Features
+namespace UnitTests.Features
 {
-    public class RegistrationUserCommandTest : TestBase
+    public class LoginUserCommandTest : TestBase
     {
-        [Fact]
-        public async Task ThrowValidationExceptionWhenEmailIsEmpty()
-        {
-            var command = Fixture.Build<RegistrationUserCommand>()
-                                 .With(x => x.Email, string.Empty)
-                                 .Create();
-
-            await Assert.ThrowsAsync<ValidationException>(() => Mediator.Send(command));
-        }
-
         [Fact]
         public async Task ThrowValidationExceptionWhenEmailIsMissing()
         {
-            var command = Fixture.Build<RegistrationUserCommand>()
+            var command = Fixture.Build<LoginUserCommand>()
                                  .Without(x => x.Email)
                                  .Create();
 
@@ -30,10 +20,10 @@ namespace XUnitTestProject.Features
         }
 
         [Fact]
-        public async Task ThrowValidationExceptionWhenPasswordIsEmpty()
+        public async Task ThrowValidationExceptionWhenEmailIsNotEmail()
         {
-            var command = Fixture.Build<RegistrationUserCommand>()
-                                 .With(x => x.Password, string.Empty)
+            var command = Fixture.Build<LoginUserCommand>()
+                                 .With(x => x.Email, Fixture.Create<string>())
                                  .Create();
 
             await Assert.ThrowsAsync<ValidationException>(() => Mediator.Send(command));
@@ -42,7 +32,7 @@ namespace XUnitTestProject.Features
         [Fact]
         public async Task ThrowValidationExceptionWhenPasswordIsMissing()
         {
-            var command = Fixture.Build<RegistrationUserCommand>()
+            var command = Fixture.Build<LoginUserCommand>()
                                  .Without(x => x.Password)
                                  .Create();
 

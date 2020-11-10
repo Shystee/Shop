@@ -1,19 +1,28 @@
-﻿using System.Net.Mail;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoFixture;
 using Shop.Api.Features.Commands;
 using Shop.Api.Infrastructure.Exceptions;
+using UnitTests.Common;
 using Xunit;
-using XUnitTestProject.Common;
 
-namespace XUnitTestProject.Features
+namespace UnitTests.Features
 {
-    public class LoginUserCommandTest : TestBase
+    public class RegistrationUserCommandTest : TestBase
     {
+        [Fact]
+        public async Task ThrowValidationExceptionWhenEmailIsEmpty()
+        {
+            var command = Fixture.Build<RegistrationUserCommand>()
+                                 .With(x => x.Email, string.Empty)
+                                 .Create();
+
+            await Assert.ThrowsAsync<ValidationException>(() => Mediator.Send(command));
+        }
+
         [Fact]
         public async Task ThrowValidationExceptionWhenEmailIsMissing()
         {
-            var command = Fixture.Build<LoginUserCommand>()
+            var command = Fixture.Build<RegistrationUserCommand>()
                                  .Without(x => x.Email)
                                  .Create();
 
@@ -21,10 +30,10 @@ namespace XUnitTestProject.Features
         }
 
         [Fact]
-        public async Task ThrowValidationExceptionWhenEmailIsNotEmail()
+        public async Task ThrowValidationExceptionWhenPasswordIsEmpty()
         {
-            var command = Fixture.Build<LoginUserCommand>()
-                                 .With(x => x.Email, Fixture.Create<string>())
+            var command = Fixture.Build<RegistrationUserCommand>()
+                                 .With(x => x.Password, string.Empty)
                                  .Create();
 
             await Assert.ThrowsAsync<ValidationException>(() => Mediator.Send(command));
@@ -33,7 +42,7 @@ namespace XUnitTestProject.Features
         [Fact]
         public async Task ThrowValidationExceptionWhenPasswordIsMissing()
         {
-            var command = Fixture.Build<LoginUserCommand>()
+            var command = Fixture.Build<RegistrationUserCommand>()
                                  .Without(x => x.Password)
                                  .Create();
 

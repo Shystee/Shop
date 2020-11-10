@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using AutoFixture;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Moq;
 using Shop.Api;
 using Shop.Api.Infrastructure.Filters;
 using Shop.Api.Repositories;
@@ -18,7 +14,7 @@ using Shop.Api.Services;
 using Shop.DataAccess;
 using StructureMap;
 
-namespace XUnitTestProject.Common
+namespace UnitTests.Common
 {
     public class TestBase : IDisposable
     {
