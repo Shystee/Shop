@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AutoFixture;
+using FluentAssertions;
 using Shop.Api.Features.Commands;
 using Shop.Api.Infrastructure.Exceptions;
 using Xunit;
@@ -57,6 +58,17 @@ namespace XUnitTestProject.Features
                                  .Create();
 
             await Assert.ThrowsAsync<ValidationException>(() => Mediator.Send(command));
+        }
+
+        [Fact]
+        public async Task CreateProductProvidingValidInfo()
+        {
+            var command = Fixture.Build<CreateProductCommand>()
+                                .Create();
+
+            var result = await Mediator.Send(command);
+
+            result.Should().NotBeNull();
         }
     }
 }

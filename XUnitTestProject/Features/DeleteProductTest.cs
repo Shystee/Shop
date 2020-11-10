@@ -29,5 +29,17 @@ namespace XUnitTestProject.Features
 
             await Assert.ThrowsAsync<ArgumentNullException>(() => Mediator.Send(command));
         }
+
+        [Fact]
+        public async Task DeleteProductProvidingValidInfo()
+        {
+            var createCommand = Fixture.Build<CreateProductCommand>().Create();
+            var product = await Mediator.Send(createCommand);
+            var deleteCommand = new DeleteProductCommand
+            {
+                ProductId = product.Id
+            };
+            await Mediator.Send(deleteCommand);
+        }
     }
 }

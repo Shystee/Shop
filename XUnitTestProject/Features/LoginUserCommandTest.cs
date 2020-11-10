@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Mail;
+using System.Threading.Tasks;
 using AutoFixture;
 using Shop.Api.Features.Commands;
 using Shop.Api.Infrastructure.Exceptions;
@@ -38,16 +39,5 @@ namespace XUnitTestProject.Features
 
             await Assert.ThrowsAsync<ValidationException>(() => Mediator.Send(command));
         }
-
-        //[Fact]
-        //public async Task ThrowValidationExceptionWhenPasswordIsLowerCase()
-        //{
-        //    var command = Fixture.Build<LoginUserCommand>()
-        //                         .With(x => x.Email, Fixture.Create<MailAddress>().Address)
-        //                         .With(x => x.Password, Fixture.Create<string>().ToLower())
-        //                         .Create();
-
-        //    await Assert.ThrowsAsync<ValidationException>(() => Mediator.Send(command));
-        //}
     }
 }

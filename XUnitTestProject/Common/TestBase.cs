@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using AutoFixture;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using Shop.Api;
 using Shop.Api.Infrastructure.Filters;
 using Shop.Api.Repositories;
@@ -34,27 +38,27 @@ namespace XUnitTestProject.Common
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddMediatR(typeof(Startup));
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-            services.AddMvc()
+            services.AddControllers()
                     .AddFluentValidation(cfg =>
                     {
                         cfg.RegisterValidatorsFromAssemblyContaining<Startup>();
                     });
             services.AddAutoMapper(typeof(Startup));
 
-            // Database
-            var databaseName = Guid.NewGuid().ToString();
-            Db = new DataContext(DatabaseContextMock<DataContext>.InMemoryDatabase());
+            services.AddDbContext<DataContext>(options =>
+                    options.UseInMemoryDatabase("Db"));
 
             // Global objects
             Fixture = new Fixture();
 
             IContainer container = new Container(cfg =>
             {
-                cfg.For<DataContext>().Use(Db);
+                // cfg.For<DataContext>().Use(Db);
                 cfg.For(typeof(ILogger<>)).Use(typeof(NullLogger<>));
                 cfg.Populate(services);
             });
 
+            Db = container.GetInstance<DataContext>();
             Mediator = container.GetInstance<IMediator>();
         }
 
