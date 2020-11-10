@@ -8,6 +8,9 @@ using Shop.Contracts.V1.Responses;
 
 namespace Shop.Api.Services
 {
+    /// <summary>
+    /// Creates paginated response
+    /// </summary>
     public interface IPaginationService
     {
         public PagedResponse<ProductResponse> CreateProductPaginatedResponse(

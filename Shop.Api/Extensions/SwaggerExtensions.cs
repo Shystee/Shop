@@ -11,6 +11,9 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Shop.Api.Extensions
 {
+    /// <summary>
+    /// Adds swagger support
+    /// </summary>
     public static class SwaggerExtensions
     {
         public static IServiceCollection AddSwagger(

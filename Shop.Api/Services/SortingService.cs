@@ -5,6 +5,9 @@ using Shop.Contracts.V1.Requests.Queries;
 
 namespace Shop.Api.Services
 {
+    /// <summary>
+    /// Filters columns that can be sorted
+    /// </summary>
     public interface ISortingService
     {
         public SortingFilter GetRatingSortingFilters(SortQuery query);

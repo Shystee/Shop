@@ -5,6 +5,10 @@ namespace Shop.Api.Extensions
 {
     public static class GeneralExtensions
     {
+        /// <summary>
+        /// Gets user id from token claims
+        /// </summary>
+        /// <returns>User Id</returns>
         public static string GetUserId(this HttpContext httpContext)
         {
             return httpContext.User == null

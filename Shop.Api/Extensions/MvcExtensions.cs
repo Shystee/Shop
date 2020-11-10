@@ -12,6 +12,9 @@ namespace Shop.Api.Extensions
 {
     public static class MvcExtensions
     {
+        /// <summary>
+        /// Adds token bearer authentication
+        /// </summary>
         public static IServiceCollection AddBearerAuthentication(
             this IServiceCollection services,
             IConfiguration configuration)
@@ -56,6 +59,9 @@ namespace Shop.Api.Extensions
             return services;
         }
 
+        /// <summary>
+        /// Adds redis support to api
+        /// </summary>
         public static IServiceCollection AddRedis(
             this IServiceCollection services,
             IConfiguration configuration)
@@ -72,7 +78,6 @@ namespace Shop.Api.Extensions
             services.AddSingleton<IConnectionMultiplexer>(_ =>
                     ConnectionMultiplexer.Connect(redisCacheSettings.ConnectionString));
             services.AddStackExchangeRedisCache(options => options.Configuration = redisCacheSettings.ConnectionString);
-            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
 
             return services;
         }
