@@ -4,7 +4,7 @@ namespace Shop.Contracts.V1.Requests.Queries
 {
     public class GetAllProductsQuery
     {
-        [FromQuery(Name = "desc")]
+        [FromQuery(Name = "description")]
         public string Description { get; set; }
 
         [FromQuery(Name = "name")]

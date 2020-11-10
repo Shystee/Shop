@@ -8,48 +8,41 @@ using Shop.DataAccess.Entities;
 
 namespace Shop.Api.Repositories
 {
-    public class InMemoryCachedProductRepository : IProductRepository
+    public class InMemoryCachedRatingRepository : IRatingRepository
     {
         private const string MyModelCacheKey = "Product";
 
         private readonly IMemoryCache cache;
         private readonly MemoryCacheEntryOptions cacheOptions;
-        private readonly IProductRepository productRepository;
+        private readonly IRatingRepository ratingRepository;
 
-        public InMemoryCachedProductRepository(IProductRepository productRepository, IMemoryCache cache)
+        public InMemoryCachedRatingRepository(IRatingRepository ratingRepository, IMemoryCache cache)
         {
-            this.productRepository = productRepository;
+            this.ratingRepository = ratingRepository;
             this.cache = cache;
 
             // 60 second cache
             cacheOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
         }
 
-        public Task AddAsync(Product model)
+        public Task AddAsync(Rating model)
         {
-            return productRepository.AddAsync(model);
+            return ratingRepository.AddAsync(model);
         }
 
-        public bool DoesProductExist(int productId)
-        {
-            var key = MyModelCacheKey + "-" + productId;
-
-            return cache.TryGetValue(key, out _);
-        }
-
-        public Task<IEnumerable<Product>> GetAllAsync()
+        public Task<IEnumerable<Rating>> GetAllAsync()
         {
             return cache.GetOrCreate(MyModelCacheKey,
                 entry =>
                 {
                     entry.SetOptions(cacheOptions);
 
-                    return productRepository.GetAllAsync();
+                    return ratingRepository.GetAllAsync();
                 });
         }
 
-        public Task<List<Product>> GetAllAsync(
-            GetAllProductsFilter filter,
+        public Task<List<Rating>> GetAllAsync(
+            GetAllRatingsFilter filter,
             PaginationFilter pagination,
             SortingFilter sortingFilter)
         {
@@ -60,11 +53,11 @@ namespace Shop.Api.Repositories
                 {
                     entry.SetOptions(cacheOptions);
 
-                    return productRepository.GetAllAsync(filter, pagination, sortingFilter);
+                    return ratingRepository.GetAllAsync(filter, pagination, sortingFilter);
                 });
         }
 
-        public Task<Product> GetByIdAsync(object id)
+        public Task<Rating> GetByIdAsync(object id)
         {
             var key = MyModelCacheKey + "-" + id;
 
@@ -73,41 +66,41 @@ namespace Shop.Api.Repositories
                 {
                     entry.SetOptions(cacheOptions);
 
-                    return productRepository.GetByIdAsync(id);
+                    return ratingRepository.GetByIdAsync(id);
                 });
         }
 
         public bool HasChanges()
         {
-            return productRepository.HasChanges();
+            return ratingRepository.HasChanges();
         }
 
-        public void Remove(Product model)
+        public void Remove(Rating model)
         {
             var key = MyModelCacheKey + "-" + model.Id;
-            productRepository.Remove(model);
+            ratingRepository.Remove(model);
             cache.Remove(key);
         }
 
         public Task<bool> SaveAsync()
         {
-            return productRepository.SaveAsync();
+            return ratingRepository.SaveAsync();
         }
 
-        public void Update(Product model)
+        public void Update(Rating model)
         {
             var key = MyModelCacheKey + "-" + model.Id;
-            productRepository.Update(model);
+            ratingRepository.Update(model);
             cache.Set(key, model, cacheOptions);
         }
 
         private string GenerateKey(
-            GetAllProductsFilter filter,
+            GetAllRatingsFilter filter,
             PaginationFilter pagination,
             SortingFilter sortingFilter)
         {
             return MyModelCacheKey.GeneratePaginationQuery(pagination)
-                                  .GenerateProductFilterQuery(filter)
+                                  .GenerateRatingFilterQuery(filter)
                                   .GenerateSortingQuery(sortingFilter);
         }
     }

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Shop.Api.Domain;
 using Shop.Api.Extensions;
-using Shop.Api.Helpers;
 using Shop.DataAccess;
 using Shop.DataAccess.Entities;
 
@@ -20,12 +19,9 @@ namespace Shop.Api.Repositories
 
     public class RatingRepository : GenericRepository<Rating>, IRatingRepository
     {
-        private readonly ISortHelper<Rating> sortHelper;
-
-        public RatingRepository(DataContext context, ISortHelper<Rating> sortHelper)
+        public RatingRepository(DataContext context)
                 : base(context)
         {
-            this.sortHelper = sortHelper;
         }
 
         public Task<List<Rating>> GetAllAsync(
@@ -36,9 +32,29 @@ namespace Shop.Api.Repositories
             IQueryable<Rating> queryable = Context.Ratings;
 
             queryable = FilterProducts(queryable, filter);
-            queryable = sortHelper.ApplySort(queryable, sortingFilter);
+            queryable = ApplySort(queryable, sortingFilter);
 
             return queryable.ApplyPagination(pagination).ToListAsync();
+        }
+
+        private IQueryable<Rating> ApplySort(IQueryable<Rating> queryable, SortingFilter filter)
+        {
+            foreach (var sorting in filter.Sortings)
+            {
+                switch (sorting.Name)
+                {
+                    case "comment":
+                        queryable = queryable.OrderBy(x => x.Comment, sorting.Direction);
+
+                        break;
+                    case "value":
+                        queryable = queryable.OrderBy(x => x.Value, sorting.Direction);
+
+                        break;
+                }
+            }
+
+            return queryable;
         }
 
         private IQueryable<Rating> FilterProducts(IQueryable<Rating> queryable, GetAllRatingsFilter filter)

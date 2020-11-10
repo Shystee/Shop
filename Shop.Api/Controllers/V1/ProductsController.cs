@@ -22,18 +22,21 @@ namespace Shop.Api.Controllers.V1
         private readonly IMapper mapper;
         private readonly IMediator mediator;
         private readonly IPaginationService paginationService;
+        private readonly ISortingService sortingService;
         private readonly IUriService uriService;
 
         public ProductsController(
             IMediator mediator,
             IMapper mapper,
             IUriService uriService,
-            IPaginationService paginationService)
+            IPaginationService paginationService,
+            ISortingService sortingService)
         {
             this.mediator = mediator;
             this.mapper = mapper;
             this.uriService = uriService;
             this.paginationService = paginationService;
+            this.sortingService = sortingService;
         }
 
         /// <summary>
@@ -122,11 +125,12 @@ namespace Shop.Api.Controllers.V1
             [FromQuery]PaginationQuery paginationQuery,
             [FromQuery]SortQuery sortQuery)
         {
-            var sortingFilter = mapper.Map<SortingFilter>(sortQuery);
+            var sortingFilter = sortingService.GetProductSortingFilters(sortQuery);
+            var filter = mapper.Map<GetAllProductsFilter>(query);
             var paginationFilter = mapper.Map<PaginationFilter>(paginationQuery);
             var productQuery = new GetProductsQuery
             {
-                Filter = mapper.Map<GetAllProductsFilter>(query),
+                Filter = filter,
                 Pagination = paginationFilter,
                 Sorting = sortingFilter
             };
@@ -134,6 +138,7 @@ namespace Shop.Api.Controllers.V1
             var result = await mediator.Send(productQuery).ConfigureAwait(false);
 
             return Ok(paginationService.CreateProductPaginatedResponse(paginationFilter,
+                filter,
                 sortingFilter,
                 result));
         }
@@ -150,12 +155,13 @@ namespace Shop.Api.Controllers.V1
             [FromQuery]PaginationQuery paginationQuery,
             [FromQuery]SortQuery sortQuery)
         {
-            var sortingFilter = mapper.Map<SortingFilter>(sortQuery);
+            var filter = mapper.Map<GetAllRatingsFilter>(query);
+            var sortingFilter = sortingService.GetRatingSortingFilters(sortQuery);
             var paginationFilter = mapper.Map<PaginationFilter>(paginationQuery);
             var productQuery = new GetRatingsQuery
             {
                 ProductId = productId,
-                Filter = mapper.Map<GetAllRatingsFilter>(query),
+                Filter = filter,
                 Pagination = paginationFilter,
                 Sorting = sortingFilter
             };
@@ -164,6 +170,7 @@ namespace Shop.Api.Controllers.V1
 
             return Ok(paginationService.CreateProductRatingsPaginatedResponse(productId,
                 paginationFilter,
+                filter,
                 sortingFilter,
                 result));
         }

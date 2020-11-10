@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Shop.Api.Extensions;
-using Shop.Api.Helpers;
 using Shop.Api.Infrastructure.Filters;
 using Shop.Api.Repositories;
 using Shop.Api.Services;
@@ -70,17 +69,16 @@ namespace Shop.Api
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>));
 
-            services.AddScoped<ISortHelper<Product>, SortHelper<Product>>();
-            services.AddScoped<ISortHelper<Rating>, SortHelper<Rating>>();
-
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.Decorate<IProductRepository, InMemoryCachedProductRepository>();
             services.AddScoped<IRatingRepository, RatingRepository>();
+            services.Decorate<IRatingRepository, InMemoryCachedRatingRepository>();
 
-            services.AddScoped<IReadOnlyProductRepository, InMemoryCachedProductRepository>();
 
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddSingleton<IPaginationService, PaginationService>();
+            services.AddSingleton<ISortingService, SortingService>();
         }
     }
 }

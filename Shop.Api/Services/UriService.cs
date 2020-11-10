@@ -15,33 +15,32 @@ namespace Shop.Api.Services
             this.baseUri = baseUri;
         }
 
-        public Uri GetAllProductsUri(PaginationQuery pagination = null)
+        public Uri GetAllProductsUri(
+            PaginationQuery pagination,
+            GetAllProductsFilter filter,
+            SortingFilter sorting)
         {
             var uri = new Uri(baseUri + ApiRoutes.Products.GetAll);
 
-            if (pagination == null)
-            {
-                return uri;
-            }
-
-            var modifiedUri = uri.AbsoluteUri.AddQuery("pageNumber", pagination.PageNumber)
-                                 .AddQuery("pageSize", pagination.PageSize);
+            var modifiedUri = uri.AbsoluteUri.GeneratePaginationQuery(pagination)
+                                 .GenerateProductFilterQuery(filter)
+                                 .GenerateSortingQuery(sorting);
 
             return new Uri(modifiedUri);
         }
 
-        public Uri GetProductRatingUri(int productId, PaginationQuery pagination = null)
+        public Uri GetProductRatingUri(
+            int productId,
+            PaginationQuery pagination,
+            GetAllRatingsFilter filter,
+            SortingFilter sorting)
         {
             var uri = new Uri(baseUri
                             + ApiRoutes.ProductRatings.GetAll.Replace("{productId}", productId.ToString()));
 
-            if (pagination == null)
-            {
-                return uri;
-            }
-
-            var modifiedUri = uri.AbsoluteUri.AddQuery("pageNumber", pagination.PageNumber)
-                                 .AddQuery("pageSize", pagination.PageSize);
+            var modifiedUri = uri.AbsoluteUri.GeneratePaginationQuery(pagination)
+                                 .GenerateRatingFilterQuery(filter)
+                                 .GenerateSortingQuery(sorting);
 
             return new Uri(modifiedUri);
         }

@@ -4,19 +4,15 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Shop.Api.Domain;
 using Shop.Api.Extensions;
-using Shop.Api.Helpers;
 using Shop.DataAccess;
 using Shop.DataAccess.Entities;
 
 namespace Shop.Api.Repositories
 {
-    public interface IProductRepository : IGenericRepository<Product>, IReadOnlyProductRepository
+    public interface IProductRepository : IGenericRepository<Product>
     {
         bool DoesProductExist(int productId);
-    }
 
-    public interface IReadOnlyProductRepository : IReadOnlyRepository<Product>
-    {
         Task<List<Product>> GetAllAsync(
             GetAllProductsFilter filter,
             PaginationFilter pagination,
@@ -25,12 +21,9 @@ namespace Shop.Api.Repositories
 
     public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
-        private readonly ISortHelper<Product> sortHelper;
-
-        public ProductRepository(DataContext context, ISortHelper<Product> sortHelper)
+        public ProductRepository(DataContext context)
                 : base(context)
         {
-            this.sortHelper = sortHelper;
         }
 
         public bool DoesProductExist(int productId)
@@ -46,7 +39,7 @@ namespace Shop.Api.Repositories
             IQueryable<Product> queryable = Context.Products.Include(x => x.Ratings);
 
             queryable = FilterProducts(queryable, filter);
-            queryable = sortHelper.ApplySort(queryable, sortingFilter);
+            queryable = ApplySort(queryable, sortingFilter);
 
             return queryable.ApplyPagination(pagination).ToListAsync();
         }
@@ -56,7 +49,35 @@ namespace Shop.Api.Repositories
             return Context.Products.Include(x => x.Ratings).FirstOrDefaultAsync(x => x.Id == (int)id);
         }
 
-        private IQueryable<Product> FilterProducts(IQueryable<Product> queryable, GetAllProductsFilter filter)
+        private static IQueryable<Product> ApplySort(IQueryable<Product> queryable, SortingFilter filter)
+        {
+            foreach (var sorting in filter.Sortings)
+            {
+                switch (sorting.Name)
+                {
+                    case "description":
+                        queryable = queryable.OrderBy(x => x.Description, sorting.Direction);
+
+                        break;
+                    case "name":
+                        queryable = queryable.OrderBy(x => x.Name, sorting.Direction);
+
+                        break;
+                    case "price":
+                        queryable = queryable.OrderBy(x => x.Price, sorting.Direction);
+
+                        break;
+                    case "averageRating":
+                        queryable = queryable.OrderBy(x => x.Ratings.Sum(r => r.Value), sorting.Direction);
+
+                        break;
+                }
+            }
+
+            return queryable;
+        }
+
+        private static IQueryable<Product> FilterProducts(IQueryable<Product> queryable, GetAllProductsFilter filter)
         {
             if (!string.IsNullOrWhiteSpace(filter.Name))
             {
